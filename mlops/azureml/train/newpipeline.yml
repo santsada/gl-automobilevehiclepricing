@@ -33,7 +33,7 @@ jobs:
       --raw_data ${{inputs.raw_data}}
       --train_data ${{outputs.train_data}}
       --test_data ${{outputs.test_data}}
-    environment: azureml:used-cars-train-env:6
+    environment: azureml:used-cars-train-env:7
     inputs:
       raw_data: ${{parent.inputs.raw_data}}
     outputs:
@@ -78,7 +78,7 @@ jobs:
       --model_name ${{inputs.model_name}}
       --model_path ${{inputs.model_path}}
       --model_info_output_path ${{outputs.model_info_output_path}}
-    environment: azureml:used-cars-train-env:6
+    environment: azureml:used-cars-train-env:7
     inputs:
       model_name: "used_cars_price_prediction_model"
       model_path: ${{parent.jobs.sweep_step.outputs.model_output}}

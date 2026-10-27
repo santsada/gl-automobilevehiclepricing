@@ -24,4 +24,4 @@ command: >-
   --n_estimators ${{inputs.n_estimators}}
   --max_depth ${{inputs.max_depth}}
   --model_output ${{outputs.model_output}}
-environment: azureml:used-cars-train-env:6
+environment: azureml:used-cars-train-env:7
