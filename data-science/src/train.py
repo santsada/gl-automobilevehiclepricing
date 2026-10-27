@@ -23,6 +23,12 @@ def parse_args():
     parser.add_argument("--test_data", type=str, required=True, help="Testing data directory")
     parser.add_argument("--n_estimators", type=int, default=100, help="Number of trees")
     parser.add_argument("--max_depth", type=int, default=10, help="Maximum tree depth")
+    parser.add_argument(
+        "--random_state",
+        type=int,
+        default=42,
+        help="Random seed for reproducible model training",
+    )
     parser.add_argument("--model_output", type=str, required=True, help="Model output directory")
     return parser.parse_args()
 
@@ -60,7 +66,7 @@ def main(args):
     model = RandomForestRegressor(
         n_estimators=args.n_estimators,
         max_depth=args.max_depth,
-        random_state=42,
+        random_state=args.random_state,
     )
     model.fit(x_train, y_train)
     predictions = model.predict(x_test)
@@ -73,7 +79,11 @@ def main(args):
     }
 
     mlflow.log_params(
-        {"n_estimators": args.n_estimators, "max_depth": args.max_depth}
+        {
+            "n_estimators": args.n_estimators,
+            "max_depth": args.max_depth,
+            "random_state": args.random_state,
+        }
     )
     mlflow.log_metrics(metrics)
 
@@ -93,5 +103,6 @@ if __name__ == "__main__":
     print(f"Model output path: {args.model_output}")
     print(f"Number of estimators: {args.n_estimators}")
     print(f"Max depth: {args.max_depth}")
+    print(f"Random state: {args.random_state}")
     with mlflow.start_run():
         main(args)

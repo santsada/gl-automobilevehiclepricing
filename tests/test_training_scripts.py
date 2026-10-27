@@ -64,6 +64,7 @@ class TrainingTests(unittest.TestCase):
                 test_data=str(test_directory),
                 n_estimators=10,
                 max_depth=3,
+                random_state=42,
                 model_output=str(model_directory),
             )
 
