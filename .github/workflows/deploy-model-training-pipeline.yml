@@ -1,0 +1,30 @@
+name: deploy-model-training-pipeline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-model-training-pipeline:
+    runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP: gl-pro3rg
+      WORKSPACE: gl-pro3ws
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Register training data and validate pipeline
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            set -euo pipefail
+            : "${RESOURCE_GROUP:?Set the AZURE_RESOURCE_GROUP repository variable.}"
+            : "${WORKSPACE:?Set the AZUREML_WORKSPACE repository variable.}"
+            az extension add --name ml --yes
+            az ml data create --file mlops/azureml/train/data.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"
+            az ml job validate --file mlops/azureml/train/newpipeline.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"
+            az ml component create --file mlops/azureml/train/train.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"

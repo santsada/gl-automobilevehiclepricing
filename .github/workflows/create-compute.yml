@@ -1,0 +1,32 @@
+name: create-compute
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  create-compute:
+    runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP: gl-pro3rg
+      WORKSPACE: gl-pro3ws
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create or update Azure ML compute
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            set -euo pipefail
+            : "${RESOURCE_GROUP:?Set the AZURE_RESOURCE_GROUP repository variable.}"
+            : "${WORKSPACE:?Set the AZUREML_WORKSPACE repository variable.}"
+            az extension add --name ml --yes
+            if az ml compute show --name cpu-cluster --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE" >/dev/null; then
+              az ml compute update --file mlops/azureml/train/compute.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"
+            else
+              az ml compute create --file mlops/azureml/train/compute.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"
+            fi

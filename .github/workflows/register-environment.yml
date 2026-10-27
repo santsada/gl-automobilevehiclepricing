@@ -1,0 +1,28 @@
+name: register-environment
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  register-environment:
+    runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP: gl-pro3rg
+      WORKSPACE: gl-pro3ws
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Register Azure ML environment
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            set -euo pipefail
+            : "${RESOURCE_GROUP:?Set the AZURE_RESOURCE_GROUP repository variable.}"
+            : "${WORKSPACE:?Set the AZUREML_WORKSPACE repository variable.}"
+            az extension add --name ml --yes
+            az ml environment create --file mlops/azureml/train/train-env.yml --resource-group "$RESOURCE_GROUP" --workspace-name "$WORKSPACE"
