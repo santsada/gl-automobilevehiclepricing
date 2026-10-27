@@ -6,5 +6,6 @@ dependencies:
   - pip
   - pip:
       - azureml-mlflow==1.38.0
+      - numpy==1.21.6
       - scikit-learn==0.24.1
       - pandas==1.2.1
